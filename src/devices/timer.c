@@ -171,7 +171,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
   ticks++;
   thread_wake();  // Change was made here
                   // This was done inorder to wake up threads that were waiting.This has been done in this function
-                  // because thread would start only when interrupts are on.This will avoid busy wait 
+                  // because thread would start only when interrupts are on.This will avoid busy wait conditin. 
   thread_tick ();
 }
 
