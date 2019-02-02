@@ -91,7 +91,7 @@ void
 timer_sleep (int64_t ticks) 
 {
   ASSERT (intr_get_level () == INTR_ON);
-  thread_sleep(ticks);  //Change was made here.
+  thread_sleep(ticks);  //Change was made here.Refer timer_interrupt() function for details
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
