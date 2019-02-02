@@ -90,6 +90,10 @@ timer_elapsed (int64_t then)
 void
 timer_sleep (int64_t ticks) 
 {
+  if(ticks<=0)
+  {
+    return;
+  }
   ASSERT (intr_get_level () == INTR_ON);
   thread_sstop(ticks); // thread_sstop() has been implemented in thread.c 
                       //Change was made here.Refer timer_interrupt() function for details
@@ -169,10 +173,6 @@ timer_print_stats (void)
 static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
-  if(ticks<0)
-  {
-    return;
-  }
   ticks++;
   thread_sstart(); // thread_sstart() has been implemented in thread.c  
                   // Change was made here
