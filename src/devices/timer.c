@@ -90,8 +90,13 @@ timer_elapsed (int64_t then)
 void
 timer_sleep (int64_t ticks) 
 {
+  if(ticks<=0)
+  {
+    return;
+  }
   ASSERT (intr_get_level () == INTR_ON);
-  thread_sleep(ticks);  //Change was made here.Refer timer_interrupt() function for details
+  thread_sstop(ticks); // thread_sstop() has been implemented in thread.c 
+                      //Change was made here.Refer timer_interrupt() function for details
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
@@ -169,9 +174,10 @@ static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
-  thread_wake();  // Change was made here
+  thread_sstart(); // thread_sstart() has been implemented in thread.c  
+                  // Change was made here
                   // This was done inorder to wake up threads that were waiting.This has been done in this function
-                  // because thread would start only when interrupts are on.This will avoid busy wait conditin. 
+                  // because thread would start only when interrupts are on.This will avoid busy wait condition. 
   thread_tick ();
 }
 
