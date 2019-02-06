@@ -151,6 +151,6 @@ void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 void thread_checking(struct thread *t1, void *aux UNUSED);
-void thread_sstop (int64_t ticks)
+void thread_sstop (int64_t ticks);
 
 #endif /* threads/thread.h */
