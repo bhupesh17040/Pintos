@@ -94,7 +94,6 @@ timer_sleep (int64_t ticks)
   {
     return;
   }
-  ASSERT (intr_get_level () == INTR_ON);
   thread_sstop(ticks); // thread_sstop() has been implemented in thread.c 
                       //Change was made here.Refer timer_interrupt() function for details
 }
