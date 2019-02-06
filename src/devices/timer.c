@@ -89,11 +89,7 @@ timer_elapsed (int64_t then)
    be turned on. */
 void
 timer_sleep (int64_t ticks) 
-{
-  if(ticks<=0)
-  {
-    return;
-  }
+{ 
   thread_sstop(ticks); // thread_sstop() has been implemented in thread.c 
                       //Change was made here.Refer timer_interrupt() function for details
 }
