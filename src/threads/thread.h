@@ -93,7 +93,7 @@ struct thread
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
     struct list_elem allelem;           /* List element for all threads list. */
-
+    
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
@@ -109,7 +109,7 @@ struct thread
     unsigned magic;                     /* Detects stack overflow. */
     int priority_original;  /*thread's priority before a donation ,modified*/
     struct list locks;                    /* All locks a thread holds , modified */
-    
+    int64_t ticks_sblock;
     bool  is_donated;  /*if thread priority is donated */
     int nice;                             /* nice vlue of the thread, modified */
  
