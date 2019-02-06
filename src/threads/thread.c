@@ -148,7 +148,7 @@ thread_print_stats (void)
           idle_ticks, kernel_ticks, user_ticks);
 }
 void
-thread_ssleep (int64_t ticks) 
+thread_sstop(int64_t ticks) 
 {
   if (ticks <= 0) {
     return;
