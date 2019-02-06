@@ -174,7 +174,11 @@ static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
-  thread_sstart(); // thread_sstart() has been implemented in thread.c  
+  enum intr_level old_level = intr_disable ();
+  thread_foreach(thread_checking, NULL);
+  intr_set_level (old_level);
+
+  thread_tick (); // thread_sstart() has been implemented in thread.c  
                   // Change was made here
                   // This was done inorder to wake up threads that were waiting.This has been done in this function
                   // because thread would start only when interrupts are on.This will avoid busy wait condition. 
