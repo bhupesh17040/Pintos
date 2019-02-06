@@ -242,7 +242,15 @@ thread_unblock (struct thread *t)
   t->status = THREAD_READY;
   intr_set_level (old_level);
 }
-
+void
+thread_checking(struct thread *t1, void *aux UNUSED) {
+  if (t1->status == THREAD_BLOCKED && t1->ticks_sblock > 0) {
+    t1->ticks_sblock--;
+    if (t1->ticks_sblock== 0) {
+      thread_unblock(t1);
+    }
+  }
+}
 /* Returns the name of the running thread. */
 const char *
 thread_name (void) 
