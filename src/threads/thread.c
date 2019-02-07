@@ -380,9 +380,7 @@ thread_set_nice (int nice UNUSED)
 int
 thread_get_nice (void) 
 {
-  
-    return thread_current ()->nice;  /*modified*/
- 
+  return 0;
 }
 
 /* Returns 100 times the system load average. */

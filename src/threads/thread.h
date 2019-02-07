@@ -24,10 +24,6 @@ typedef int tid_t;
 #define PRI_DEFAULT 31                  /* Default priority. */
 #define PRI_MAX 63                      /* Highest priority. */
 
-#define NICE_High -20                   /* highest nice  value. modified */
-#define NICE_DEFAULT 0                  /* default nice  value. modified*/
-#define NICE_Low 19                     /* lowest nice  value. modified */
-
 /* A kernel thread or user process.
 
    Each thread structure is stored in its own 4 kB page.  The
@@ -99,20 +95,11 @@ struct thread
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
-      int child_loading_status; /* flag to know the loading status of child ,modified */
-      struct list children;   /* list of statuses of childrens*/
     uint32_t *pagedir;                  /* Page directory. */
-      tid_t parent;      /*Id  of the parent , modified*/
 #endif
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
-    int priority_original;  /*thread's priority before a donation ,modified*/
-    struct list locks;                    /* All locks a thread holds , modified */
-    int64_t ticks_sblock;
-    bool  is_donated;  /*if thread priority is donated */
-    int nice;                             /* nice vlue of the thread, modified */
- 
   };
 
 /* If false (default), use round-robin scheduler.
