@@ -99,7 +99,9 @@ struct thread
 #endif
 
     /* Owned by thread.c. */
-    unsigned magic;                     /* Detects stack overflow. */
+    unsigned magic; /* Detects stack overflow. */
+    struct list lockforthread;    //List of locks for threads
+    int pri_min;                  // Minimum/Base priority of each thread.It has been defined as 0.
     int64_t ticks_sblock;
   };
 
