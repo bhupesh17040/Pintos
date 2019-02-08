@@ -142,5 +142,5 @@ int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 void thread_checking(struct thread *t1, void *aux UNUSED);
 void thread_sstop (int64_t ticks);
-
+bool prioritycheck(const struct list_elem*f1,const struct list_elem*f2,void *aux UNUSED);
 #endif /* threads/thread.h */
