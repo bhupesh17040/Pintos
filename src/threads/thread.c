@@ -274,7 +274,7 @@ bool prioritycheck(const struct list_elem*f1,const struct list_elem*f2,void *aux
    {    return list_entry(f2,struct thread,elem)->priority < list_entry(f1,struct thread,elem)->priority;
    }
    else
-   {   return list_entry(f2,struct thread,elem)->priority < list_entry(f1,struct thread,elem)->priority
+   {   return list_entry(f2,struct thread,elem)->priority < list_entry(f1,struct thread,elem)->priority;
    }
 }
 
@@ -380,7 +380,15 @@ thread_foreach (thread_action_func *func, void *aux)
 void
 thread_set_priority (int new_priority) 
 {
-  thread_current ()->priority = new_priority;
+  if(new_priority < thread_current()->priority)
+  {
+    thread_current ()->priority = new_priority;
+    thread_yield();
+  }
+  else
+  {
+    thread_current ()->priority = new_priority;
+  }
 }
 
 /* Returns the current thread's priority. */
