@@ -148,7 +148,7 @@ thread_print_stats (void)
           idle_ticks, kernel_ticks, user_ticks);
 }
 void
-thread_sstop(int64_t ticks) 
+thread_sstop(int64_t ticks)      // This function was added additionally to implement alarm clock
 {
   if (ticks <= 0) {
     return;
@@ -156,7 +156,7 @@ thread_sstop(int64_t ticks)
   ASSERT (intr_get_level () == INTR_ON);
 
   enum intr_level old_level;
-  struct thread *t = thread_current();
+  struct thread *t = thread_current();   // Current thread
   t->ticks_sblock= ticks;
 
   old_level = intr_disable();
@@ -215,7 +215,11 @@ thread_create (const char *name, int priority,
   sf->ebp = 0;
 
   /* Add to run queue. */
+   t->ticks_sblock=0;
   thread_unblock (t);
+   if(t->priority > thread_current()->priority)         /* This is according to definition */
+   {  thread_yield();                                   /* If the incoming thread has higher priority than the currently scheduled thread,then,the currently running thread will yield to the CPU and the incoming thread will get scheduled */
+   }
 
   return tid;
 }
