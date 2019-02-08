@@ -309,6 +309,18 @@ cond_wait (struct condition *cond, struct lock *lock)
    An interrupt handler cannot acquire a lock, so it does not
    make sense to try to signal a condition variable within an
    interrupt handler. */
+ /* Changes were made here */
+bool prioritylockcheck(const struct list_elem *f1, const struct list_elem *f2,void *aux UNUSED)
+{
+   if(list_entry(f2,struct lock,elem)->pri_max < list_entry(f1,struct lock,elem)->pri_max)
+   {  return list_entry(f2,struct lock,elem)->pri_max < list_entry(f1,struct lock,elem)->pri_max;
+   }
+   else
+   { return list_entry(f2,struct lock,elem)->pri_max < list_entry(f1,struct lock,elem)->pri_max;
+   }
+}
+
+
 void
 cond_signal (struct condition *cond, struct lock *lock UNUSED) 
 {
