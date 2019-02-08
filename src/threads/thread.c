@@ -249,18 +249,35 @@ thread_block (void)
    it may expect that it can atomically unblock a thread and
    update other data. */
 void
-thread_unblock (struct thread *t) 
+thread_unblock (struct thread *t1) 
 {
   enum intr_level old_level;
 
-  ASSERT (is_thread (t));
+  ASSERT (is_thread (t1));
 
   old_level = intr_disable ();
-  ASSERT (t->status == THREAD_BLOCKED);
-  list_push_back (&ready_list, &t->elem);
-  t->status = THREAD_READY;
+  ASSERT (t1->status == THREAD_BLOCKED);
+  /* Change was made here */
+  /*list_insert_ordered() is an in-built function which takes the list,
+    its elements and a boolean value as its input parameters.
+   */
+  list_insert_ordered(&ready_list,&t1->elem,prioritycheck,NULL);
+  t1->status = THREAD_READY;
   intr_set_level (old_level);
 }
+/* Change was made here */
+/* The following function returns True if f1's priority is greater than f2's priority
+*/
+bool prioritycheck(const struct list_elem*f1,const struct list_elem*f2,void *aux UNUSED)
+{
+   if(list_entry(f2,struct thread,elem)->priority < list_entry(f1,struct thread,elem)->priority)
+   {    return list_entry(f2,struct thread,elem)->priority < list_entry(f1,struct thread,elem)->priority;
+   }
+   else
+   {   return list_entry(f2,struct thread,elem)->priority < list_entry(f1,struct thread,elem)->priority
+   }
+}
+
 void
 thread_checking(struct thread *t1, void *aux UNUSED) {
   if (t1->status == THREAD_BLOCKED && t1->ticks_sblock > 0) {
