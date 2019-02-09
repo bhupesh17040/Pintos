@@ -278,6 +278,32 @@ bool prioritycheck(const struct list_elem*f1,const struct list_elem*f2,void *aux
    }
 }
 /* Changes were made here */
+/* Implementing function to hold locks */
+void lock_hold(struct lock*lock)
+{  
+   enum intr_level old_level=intr_disable();
+   struct thread*cur1= thread_current();
+   list_insert_ordered(&cur1->lockforthread,&lock->elem,prioritylockcheck,NULL);
+   bool b2=(lock->pri_max > cur1->priority);
+   if(b2)
+   {
+      cur1->priority=lock->pri_max;
+      thread_yield();
+   }
+   intr_set_level(old_level);
+   
+}
+/* Changes were made here */
+/* Implementing function to remove lock */
+void lock_remove(struct lock*lock)
+{
+   enum intr_level old_level= intr_disable();
+   list_remove(&lock->elem);
+   priorityupdate(thread_current());
+   intr_set_level(old_level);
+}
+
+/* Changes were made here */
 void priorityupdate(struct thread*t1)
 {
    enum intr_level old_level= intr_disable();
@@ -550,9 +576,12 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
+  t->pri_min=priority;
+  list_init(&t->lockforthread);
+  t->lockwait=NULL;
 
   old_level = intr_disable ();
-  list_push_back (&all_list, &t->allelem);
+  list_insert_ordered(&all_list, &t->allelem,prioritycheck,NULL);
   intr_set_level (old_level);
 }
 
