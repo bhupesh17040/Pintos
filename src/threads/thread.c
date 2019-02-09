@@ -277,7 +277,42 @@ bool prioritycheck(const struct list_elem*f1,const struct list_elem*f2,void *aux
    {   return list_entry(f2,struct thread,elem)->priority < list_entry(f1,struct thread,elem)->priority;
    }
 }
-
+/* Changes were made here */
+void priorityupdate(struct thread*t1)
+{
+   enum intr_level old_level= intr_disable();
+   int pri_lock;
+   int pri_max=t1->pri_min;
+   if(!list_empty(&t1->lockforthread))
+   {
+      list_sort(&t1->lockforthread,prioritylockcheck,NULL);
+      pri_lock=list_entry(list_front(&t1->lockforthread),struct lock,elem)->pri_max;
+      bool b1=(pri_max < pri_lock);
+      if(b1)
+      {
+         pri_max=pri_lock;
+      }
+   }
+   t1->priority=pri_max;
+   intr_set_level(old_level);
+}
+/* Changes were made here */
+void prioritydonate(struct thread *t1)
+{
+   enum intr_level old_level=intr_disable();
+   priorityupdate(t1);
+   /* Checking whether the thread is ready or not */
+   if(t1->status == THREAD_READY)
+   {
+      /* in-built function to remove element from the list */
+      list_remove(&t1->elem);
+      /* ready_list is already defined.This is the list of ready threads */
+      list_insert_ordered(&ready_list,&t1->elem,prioritycheck,NULL);
+   }
+   intr_set_level(old_level);
+   
+}
+/* Changes were made here */
 void
 thread_checking(struct thread *t1, void *aux UNUSED) {
   if (t1->status == THREAD_BLOCKED && t1->ticks_sblock > 0) {
@@ -353,7 +388,7 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (cur != idle_thread) 
-    list_push_back (&ready_list, &cur->elem);
+    list_insert_ordered(&ready_list,&cur->elem,prioritycheck,NULL);
   cur->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
