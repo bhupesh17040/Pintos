@@ -199,12 +199,34 @@ lock_init (struct lock *lock)
 void
 lock_acquire (struct lock *lock)
 {
-  ASSERT (lock != NULL);
+   enum intr_level old_level;
+   struct thread*cur_thread=thread_current();
+   struct lock*tmplock;
+   ASSERT (lock != NULL);
   ASSERT (!intr_context ());
   ASSERT (!lock_held_by_current_thread (lock));
-
+   if(!thread_mlfqs && lock->holder!=NULL)
+   {
+      cur_thread->lockwait=lock;
+      tmplock=lock;
+      while(cur_thread->priority > tmplock->pri_max && tmplock)
+      {
+         tmplock->pri_max=cur_thread->priority;
+         prioritydonate(tmplock->holder);
+         tmplock=tmplock->holder->lockwait;
+      }
+   }
   sema_down (&lock->semaphore);
+  old_level=intr_disable();
+  cur_thread=thread_current();
+  if(!thread_mlfqs)
+  {
+     cur_thread->lockwait=NULL;
+     lock->pri_max=cur_thread->priority;
+     lock_hold(lock);
+  }
   lock->holder = thread_current ();
+   intr_set_level(old_level);
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
@@ -237,9 +259,15 @@ lock_release (struct lock *lock)
 {
   ASSERT (lock != NULL);
   ASSERT (lock_held_by_current_thread (lock));
+  enum intr_level old_level=intr_disable();
+  if(!thread_mlfqs)
+  {
+     lock_remove(lock);
+  }
 
   lock->holder = NULL;
   sema_up (&lock->semaphore);
+  intr_set_level(old_level);
 }
 
 /* Returns true if the current thread holds LOCK, false
