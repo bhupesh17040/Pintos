@@ -102,6 +102,7 @@ struct thread
     unsigned magic; /* Detects stack overflow. */
     struct list lockforthread;    //List of locks for threads
     int pri_min;                  // Minimum/Base priority of each thread.It has been defined as 0.
+    struct lock *lockwait;
     int64_t ticks_sblock;
   };
 
@@ -142,7 +143,12 @@ int thread_get_nice (void);
 void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
+/* Added functions */
 void thread_checking(struct thread *t1, void *aux UNUSED);
 void thread_sstop (int64_t ticks);
 bool prioritycheck(const struct list_elem*f1,const struct list_elem*f2,void *aux UNUSED);
+void lock_hold(struct lock*lock);
+void lock_remove(struct lock*lock);
+/* Added functions end*/
+
 #endif /* threads/thread.h */
