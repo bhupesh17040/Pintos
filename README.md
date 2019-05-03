@@ -1,1 +1,1 @@
-# OS-Project
+# Pintos priority scheduling
